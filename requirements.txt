@@ -1,0 +1,12 @@
+git+https://github.com/fastforwardlabs/cmlbootstrap#egg=cmlbootstrap
+numpy
+pandas
+plotly
+requests
+urllib3
+Werkzeug==0.16.1
+seaborn
+sklearn
+onnxruntime
+onnxmltools
+onnx
