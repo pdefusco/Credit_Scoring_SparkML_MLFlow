@@ -18,8 +18,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 class PySparkOversamplingExperiment:
-    def __init__(self, model):
-        self.model = model
+    def __init__(self, mlflow_experiment_name, mlflow_exeperiment_tagsdict):
+        self.mlflow_experiment_name = mlflow_experiment_name
+        self.mlflow_exeperiment_tags = mlflow_exeperiment_tagsdict
 
     def vectorizerFunction(dataInput, TargetFieldName):
         '''
@@ -118,6 +119,14 @@ class PySparkOversamplingExperiment:
         
         return df_pre_smote
 
+tags = {
+    "engineering": "ML Platform",
+    "release.candidate": "RC1",
+    "release.version": "2.2.0",
+}
+    
+PySparkOversamplingExperiment("oversampling-experiment", tags)
+    
     
 spark = SparkSession.builder.appName("PythonSQL")\
             .config("spark.hadoop.fs.s3a.s3guard.ddb.region","us-east-2")\
@@ -126,6 +135,10 @@ spark = SparkSession.builder.appName("PythonSQL")\
 
 #Step1: Load data
 df = spark.sql("SELECT * FROM default.LC_Table")
+
+
+
+
 
 #Step2: Transform and Scale
 df_pre_smote = prepare_data(df)
