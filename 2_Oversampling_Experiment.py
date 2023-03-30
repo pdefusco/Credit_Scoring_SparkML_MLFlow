@@ -9,7 +9,6 @@ from pyspark.sql import Row
 from sklearn import neighbors
 from pyspark.ml.feature import VectorAssembler
 from pyspark.mllib.stat import Statistics
-
 from pyspark.ml.evaluation import BinaryClassificationEvaluator
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.tuning import ParamGridBuilder, TrainValidationSplit
@@ -18,7 +17,6 @@ from pyspark.ml import Pipeline
 from pyspark.mllib.stat import Statistics
 from pyspark.ml.linalg import DenseVector
 from pyspark.sql import functions as F
-
 from pyspark.sql import SparkSession
 import pandas as pd
 import seaborn as sns
@@ -28,9 +26,6 @@ spark = SparkSession.builder.appName("PythonSQL")\
                             .config("spark.hadoop.fs.s3a.s3guard.ddb.region","us-east-2")\
                             .config("spark.yarn.access.hadoopFileSystems",os.environ["STORAGE"])\
                             .getOrCreate()
-    #.config("spark.executor.memory","2g")\
-    #.config("spark.executor.cores","8")\
-    #.config("spark.driver.memory","2g")\
 
 def vectorizerFunction(dataInput, TargetFieldName):
     if(dataInput.select(TargetFieldName).distinct().count() != 2):
@@ -42,10 +37,6 @@ def vectorizerFunction(dataInput, TargetFieldName):
     pos_vectorized = assembler.transform(dataInput)
     vectorized = pos_vectorized.select('features',TargetFieldName).withColumn('label',pos_vectorized[TargetFieldName]).drop(TargetFieldName)
     return vectorized
-
-
-# In[8]:
-
 
 def SmoteSampling(vectorized, k = 5, minorityClass = 1, majorityClass = 0, percentageOver = 200, percentageUnder = 100):
     if(percentageUnder > 100|percentageUnder < 10):
@@ -82,10 +73,6 @@ def SmoteSampling(vectorized, k = 5, minorityClass = 1, majorityClass = 0, perce
     new_data_minor = dataInput_min.unionAll(new_data)
     new_data_major = dataInput_maj.sample(False, (float(percentageUnder)/float(100)))
     return new_data_major.unionAll(new_data_minor)
-
-
-# In[9]:
-
 
 #df = spark.read.option('inferschema','true').csv('data/Data_Exploration.csv', header=True)
 
